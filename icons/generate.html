@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head><title>LinkBase Icon Generator</title></head>
+<body style="background:#0d0d1a;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0">
+<canvas id="c" width="512" height="512"></canvas>
+<script>
+const c = document.getElementById('c');
+const ctx = c.getContext('2d');
+// Draw gradient rect
+const g = ctx.createLinearGradient(0,0,512,512);
+g.addColorStop(0,'#6c63ff'); g.addColorStop(1,'#a855f7');
+ctx.fillStyle = g;
+ctx.beginPath();
+const r=120;
+ctx.moveTo(r,0); ctx.lineTo(512-r,0);
+ctx.quadraticCurveTo(512,0,512,r);
+ctx.lineTo(512,512-r); ctx.quadraticCurveTo(512,512,512-r,512);
+ctx.lineTo(r,512); ctx.quadraticCurveTo(0,512,0,512-r);
+ctx.lineTo(0,r); ctx.quadraticCurveTo(0,0,r,0);
+ctx.closePath(); ctx.fill();
+
+// Diamond shape
+ctx.fillStyle='rgba(255,255,255,0.9)';
+ctx.beginPath();
+ctx.moveTo(140,256); ctx.quadraticCurveTo(256,120,372,256);
+ctx.quadraticCurveTo(256,392,140,256);
+ctx.closePath(); ctx.fill();
+
+// Circle
+ctx.fillStyle='white';
+ctx.beginPath(); ctx.arc(256,256,52,0,Math.PI*2); ctx.fill();
+
+// Export
+[192,512].forEach(sz => {
+  const tc = document.createElement('canvas');
+  tc.width=tc.height=sz;
+  tc.getContext('2d').drawImage(c,0,0,sz,sz);
+  const a = document.createElement('a');
+  a.href=tc.toDataURL('image/png');
+  a.download=`icon-${sz}.png`;
+  document.body.appendChild(a);
+  a.click();
+});
+document.body.innerHTML += '<p style="color:#a0a0c0;font-family:sans-serif;text-align:center;margin-top:20px">Icons downloaded!</p>';
+</script>
+</body>
+</html>

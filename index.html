@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="LinkBase – Private PWA link manager with voice search and dictation" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="LinkBase" />
+  <title>LinkBase</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="logo.png" type="image/png" />
+  <link rel="apple-touch-icon" href="logo.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="css/main.css?v=3" />
+</head>
+
+<body>
+
+  <!-- PWA Install Prompt -->
+  <div id="install-prompt" class="hidden" role="dialog" aria-modal="true" aria-labelledby="install-title">
+    <div class="install-card">
+      <div class="install-icon">
+        <img src="logo.png" alt="LinkBase" width="56" height="56" />
+      </div>
+      <h2 id="install-title">Install LinkBase</h2>
+      <p>Add LinkBase to your home screen for a native-like experience with full offline access.</p>
+      <div id="ios-instructions" class="install-ios hidden">
+        <strong>To install on iPhone / iPad:</strong>
+        Tap the <strong>Share</strong> button in Safari, then tap <strong>"Add to Home Screen"</strong>.
+      </div>
+      <div class="install-btns">
+        <button id="btn-install-no">Not Now</button>
+        <button id="btn-install-yes">Install App</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="app" class="hidden">
+    <div id="overlay" class="overlay hidden"></div>
+
+    <aside id="sidebar">
+      <div class="sidebar-top">
+        <div class="logo">
+          <!-- <img src="logo.png" alt="LinkBase" width="28" height="28" class="logo-img" /> -->
+          <span>LinkBase</span>
+        </div>
+        <button id="btn-close-sb" class="icon-btn" aria-label="Close sidebar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+        </button>
+      </div>
+      <nav id="sidebar-nav">
+        <button class="nav-btn active" data-view="all">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+            <polyline points="9 22 9 12 15 12 15 22" />
+          </svg>
+          <span>All Links</span><em id="b-all" class="bdg">0</em>
+        </button>
+        <button class="nav-btn" data-view="favorites">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon
+              points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+          </svg>
+          <span>Favorites</span><em id="b-fav" class="bdg">0</em>
+        </button>
+
+        <div class="sec-label">Collections</div>
+        <div id="col-nav"></div>
+        <button class="nav-btn nav-add" id="btn-new-col">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="16" />
+            <line x1="8" y1="12" x2="16" y2="12" />
+          </svg>
+          <span>New Collection</span>
+        </button>
+      </nav>
+      <div class="sidebar-foot">
+        <button id="btn-json" class="foot-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="8 17 12 21 16 17" />
+            <line x1="12" y1="12" x2="12" y2="21" />
+            <path d="M20.88 18.09A5 5 0 0018 9h-1.26A8 8 0 103 16.29" />
+          </svg>Export JSON
+        </button>
+        <button id="btn-pdf" class="foot-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+          </svg>Export PDF
+        </button>
+        <button id="btn-theme" class="foot-btn" aria-label="Toggle theme">
+          <svg id="theme-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+          </svg>
+          <span id="theme-lbl">Light Mode</span>
+        </button>
+      </div>
+    </aside>
+
+    <main id="main">
+      <header class="topbar">
+        <button id="btn-open-sb" class="icon-btn" aria-label="Menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </button>
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="s-ico">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input id="search-inp" type="search" placeholder="Search or describe a link…" autocomplete="off"
+            aria-label="Search links" />
+          <button id="btn-voice" class="sb-act" title="Voice search" aria-label="Voice">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z" />
+              <path d="M19 10v2a7 7 0 01-14 0v-2" />
+              <line x1="12" y1="19" x2="12" y2="23" />
+              <line x1="8" y1="23" x2="16" y2="23" />
+            </svg>
+          </button>
+        </div>
+        <button id="btn-add" class="btn-primary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+          Add Link
+        </button>
+      </header>
+
+      <div class="content">
+        <div class="view-hdr">
+          <div>
+            <h2 id="view-title">All Links</h2>
+            <p id="view-sub">Your personal knowledge base</p>
+          </div>
+          <div class="view-ctrl">
+            <select id="sort-sel" aria-label="Sort">
+              <option value="newest">Newest first</option>
+              <option value="oldest">Oldest first</option>
+              <option value="az">A → Z</option>
+              <option value="za">Z → A</option>
+            </select>
+            <button id="btn-gv" class="icon-btn is-active" title="Grid" aria-pressed="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="7" height="7" />
+                <rect x="14" y="3" width="7" height="7" />
+                <rect x="3" y="14" width="7" height="7" />
+                <rect x="14" y="14" width="7" height="7" />
+              </svg>
+            </button>
+            <button id="btn-lv" class="icon-btn" title="List" aria-pressed="false">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="8" y1="6" x2="21" y2="6" />
+                <line x1="8" y1="12" x2="21" y2="12" />
+                <line x1="8" y1="18" x2="21" y2="18" />
+                <line x1="3" y1="6" x2="3.01" y2="6" />
+                <line x1="3" y1="12" x2="3.01" y2="12" />
+                <line x1="3" y1="18" x2="3.01" y2="18" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div id="voice-banner" class="voice-banner hidden">
+          <div class="waves"><span></span><span></span><span></span><span></span><span></span></div>
+          <span id="v-label">Listening…</span>
+          <button id="btn-stop-v" class="pill-btn">Stop</button>
+        </div>
+
+        <div id="grid" class="links-grid" role="list"></div>
+
+        <div id="empty" class="empty-state hidden">
+          <img src="logo.png" alt="LinkBase" width="100" height="100" class="empty-logo" />
+          <h3 id="empty-title">No links yet</h3>
+          <p id="empty-msg">Click <strong>Add Link</strong> to get started.</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal: Add/Edit -->
+  <div id="m-link" class="backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="ml-title">
+    <div class="modal">
+      <div class="modal-hd">
+        <h3 id="ml-title">Add New Link</h3>
+        <button class="icon-btn cls-modal" data-m="m-link" aria-label="Close"><svg viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg></button>
+      </div>
+      <div class="modal-bd">
+        <div class="fld"><label for="f-url">URL <span class="req">*</span></label>
+          <div class="fld-row"><input id="f-url" type="url" placeholder="https://…" /><button id="btn-fetch"
+              class="pill-btn">Fetch</button></div>
+        </div>
+        <div class="fld"><label for="f-title">Title</label>
+          <div class="fld-row">
+            <input id="f-title" type="text" placeholder="Link title" />
+            <button id="btn-dictate-title" class="dict-btn" title="Voice fill title" aria-label="Dictate title">
+              <svg class="mic-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z" />
+                <path d="M19 10v2a7 7 0 01-14 0v-2" />
+                <line x1="12" y1="19" x2="12" y2="23" />
+                <line x1="8" y1="23" x2="16" y2="23" />
+              </svg>
+              <svg class="pause-ico" viewBox="0 0 24 24" fill="currentColor" stroke="none" width="16" height="16">
+                <rect x="6" y="4" width="4" height="16"></rect>
+                <rect x="14" y="4" width="4" height="16"></rect>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="fld"><label for="f-desc">Notes</label>
+          <div class="fld-row">
+            <textarea id="f-desc" rows="3" placeholder="Your notes…"></textarea>
+            <button id="btn-dictate-desc" class="dict-btn" title="Voice fill notes" aria-label="Dictate notes">
+              <svg class="mic-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z" />
+                <path d="M19 10v2a7 7 0 01-14 0v-2" />
+                <line x1="12" y1="19" x2="12" y2="23" />
+                <line x1="8" y1="23" x2="16" y2="23" />
+              </svg>
+              <svg class="pause-ico" viewBox="0 0 24 24" fill="currentColor" stroke="none" width="16" height="16">
+                <rect x="6" y="4" width="4" height="16"></rect>
+                <rect x="14" y="4" width="4" height="16"></rect>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="fld-2col">
+          <div class="fld"><label for="f-col">Collection</label><select id="f-col">
+              <option value="">None</option>
+            </select></div>
+          <div class="fld"><label for="f-tags">Tags</label><input id="f-tags" type="text" placeholder="tag1, tag2" />
+          </div>
+        </div>
+        <div class="checks">
+          <label class="chk"><input type="checkbox" id="f-fav" /> Favorite</label>
+        </div>
+        <div id="preview-card" class="preview-card hidden">
+          <div id="prev-thumb" class="prev-thumb"></div>
+          <div class="prev-info"><span id="prev-site"></span>
+            <p id="prev-title"></p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-ft">
+        <button class="pill-btn cls-modal" data-m="m-link">Cancel</button>
+        <button id="btn-save" class="btn-primary">Save Link</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: New Collection (name only, no emoji) -->
+  <div id="m-col" class="backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="mc-title">
+    <div class="modal modal-sm">
+      <div class="modal-hd">
+        <h3 id="mc-title">New Collection</h3>
+        <button class="icon-btn cls-modal" data-m="m-col" aria-label="Close"><svg viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg></button>
+      </div>
+      <div class="modal-bd">
+        <div class="fld">
+          <label for="c-name">Collection Name <span class="req">*</span></label>
+          <input id="c-name" type="text" placeholder="e.g. Work, Research, Design…" autocomplete="off" />
+        </div>
+      </div>
+      <div class="modal-ft">
+        <button class="pill-btn cls-modal" data-m="m-col">Cancel</button>
+        <button id="btn-save-col" class="btn-primary">Create</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Delete -->
+  <div id="m-del" class="backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="md-title">
+    <div class="modal modal-sm">
+      <div class="modal-hd">
+        <h3 id="md-title">Delete Link?</h3>
+        <button class="icon-btn cls-modal" data-m="m-del" aria-label="Close"><svg viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg></button>
+      </div>
+      <div class="modal-bd">
+        <p>Delete <strong id="del-name"></strong>? This cannot be undone.</p>
+      </div>
+      <div class="modal-ft">
+        <button class="pill-btn cls-modal" data-m="m-del">Cancel</button>
+        <button id="btn-del-confirm" class="btn-danger">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toasts" aria-live="polite"></div>
+
+  <script src="js/db.js"></script>
+  <script src="js/voice.js"></script>
+  <script src="js/export.js"></script>
+  <script src="js/app.js"></script>
+</body>
+
+</html>
