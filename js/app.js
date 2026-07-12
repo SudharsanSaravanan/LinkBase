@@ -17,14 +17,16 @@ let state = {
   layout: 'grid',
   query: '',
   editId: null,
-  deleteId: null
+  deleteId: null,
+  editColId: null,
+  deleteColId: null
 };
 
 
 
 
 // ── Helpers ──
-const $  = id => document.getElementById(id);
+const $ = id => document.getElementById(id);
 const qs = sel => document.querySelector(sel);
 
 function toast(msg, type = 'info', dur = 3000) {
@@ -32,14 +34,14 @@ function toast(msg, type = 'info', dur = 3000) {
   el.className = `toast ${type}`;
   el.textContent = msg;
   $('toasts').appendChild(el);
-  setTimeout(() => { el.classList.add('out'); setTimeout(()=>el.remove(), 300); }, dur);
+  setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 300); }, dur);
 }
 
-function openModal(id)  { $(id).classList.remove('hidden'); }
+function openModal(id) { $(id).classList.remove('hidden'); }
 function closeModal(id) { $(id).classList.add('hidden'); }
 
 function domain(url) {
-  try { return new URL(url).hostname.replace('www.',''); } catch { return url; }
+  try { return new URL(url).hostname.replace('www.', ''); } catch { return url; }
 }
 function faviconUrl(url) {
   try { const u = new URL(url); return `https://www.google.com/s2/favicons?sz=32&domain=${u.hostname}`; } catch { return ''; }
@@ -93,14 +95,14 @@ function cardThumb(link) {
 }
 
 function renderCard(link) {
-  const tags = (link.tags||[]).map(t=>`<span class="tag">${t}</span>`).join('');
-  const badgeFav  = link.favorite ? '<span class="mini-badge fav">Fav</span>' : '';
+  const tags = (link.tags || []).map(t => `<span class="tag">${t}</span>`).join('');
+  const badgeFav = link.favorite ? '<span class="mini-badge fav">Fav</span>' : '';
   const col = state.collections.find(c => c.id === link.collection);
   const siteLabel = col ? col.name : domain(link.url);
 
   const el = document.createElement('div');
   el.className = 'card';
-  el.setAttribute('role','listitem');
+  el.setAttribute('role', 'listitem');
   el.dataset.id = link.id;
   el.innerHTML = `
     ${cardThumb(link)}
@@ -109,15 +111,15 @@ function renderCard(link) {
         ${!col ? `<img src="${faviconUrl(link.url)}" width="14" height="14" alt="" onerror="this.remove()"/>` : ''}
         <span>${siteLabel}</span>
       </div>
-      <div class="card-title"><a href="${link.url}" target="_blank" rel="noopener">${link.title||link.url}</a></div>
+      <div class="card-title"><a href="${link.url}" target="_blank" rel="noopener">${link.title || link.url}</a></div>
       ${link.description ? `<div class="card-desc">${link.description}</div>` : ''}
       ${tags ? `<div class="card-tags">${tags}</div>` : ''}
       <div class="card-badges">${badgeFav}</div>
     </div>
     <div class="card-footer">
       <div class="card-actions">
-        <button class="card-action fav-btn ${link.favorite?'fav-on':''}" data-id="${link.id}" title="${link.favorite?'Unfavorite':'Favorite'}">
-          <svg viewBox="0 0 24 24" stroke="currentColor" fill="${link.favorite?'currentColor':'none'}" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <button class="card-action fav-btn ${link.favorite ? 'fav-on' : ''}" data-id="${link.id}" title="${link.favorite ? 'Unfavorite' : 'Favorite'}">
+          <svg viewBox="0 0 24 24" stroke="currentColor" fill="${link.favorite ? 'currentColor' : 'none'}" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
         </button>
         <button class="card-action edit-btn" data-id="${link.id}" title="Edit">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
@@ -137,26 +139,26 @@ function filterLinks(all) {
   // View filter
   if (state.view === 'favorites') list = list.filter(l => l.favorite);
   else if (state.view.startsWith('col:')) {
-    const colId = parseInt(state.view.replace('col:',''));
+    const colId = parseInt(state.view.replace('col:', ''));
     list = list.filter(l => l.collection === colId);
   }
 
   if (state.query) {
     const q = state.query.toLowerCase();
     list = list.filter(l =>
-      (l.title||'').toLowerCase().includes(q) ||
-      (l.url||'').toLowerCase().includes(q) ||
-      (l.description||'').toLowerCase().includes(q) ||
-      (l.tags||[]).some(t => t.toLowerCase().includes(q))
+      (l.title || '').toLowerCase().includes(q) ||
+      (l.url || '').toLowerCase().includes(q) ||
+      (l.description || '').toLowerCase().includes(q) ||
+      (l.tags || []).some(t => t.toLowerCase().includes(q))
     );
   }
 
   // Sort
-  list.sort((a,b) => {
+  list.sort((a, b) => {
     if (state.sort === 'newest') return b.createdAt - a.createdAt;
     if (state.sort === 'oldest') return a.createdAt - b.createdAt;
-    const ta = (a.title||a.url||'').toLowerCase();
-    const tb = (b.title||b.url||'').toLowerCase();
+    const ta = (a.title || a.url || '').toLowerCase();
+    const tb = (b.title || b.url || '').toLowerCase();
     if (state.sort === 'az') return ta < tb ? -1 : ta > tb ? 1 : 0;
     return ta > tb ? -1 : ta < tb ? 1 : 0;
   });
@@ -171,17 +173,17 @@ async function renderGrid(overrideLinks) {
   const toShow = overrideLinks !== undefined ? overrideLinks : filterLinks(state.links);
 
   // Badges
-  $('b-all').textContent  = state.links.length;
-  $('b-fav').textContent  = state.links.filter(l=>l.favorite).length;
+  $('b-all').textContent = state.links.length;
+  $('b-fav').textContent = state.links.filter(l => l.favorite).length;
 
   if (!toShow.length) {
     $('empty').classList.remove('hidden');
     if (state.query) {
       $('empty-title').textContent = 'No results found';
-      $('empty-msg').textContent   = 'Try different keywords.';
+      $('empty-msg').textContent = 'Try different keywords.';
     } else {
       $('empty-title').textContent = 'No links here yet';
-      $('empty-msg').innerHTML     = 'Click <strong>Add Link</strong> to get started.';
+      $('empty-msg').innerHTML = 'Click <strong>Add Link</strong> to get started.';
     }
     return;
   }
@@ -197,18 +199,68 @@ function renderCollectionsNav() {
   const nav = $('col-nav');
   nav.innerHTML = '';
   state.collections.forEach(col => {
+    const item = document.createElement('div');
+    item.className = 'col-nav-item';
+    if (state.view === `col:${col.id}`) item.classList.add('active');
+
     const btn = document.createElement('button');
     btn.className = 'nav-btn';
     btn.dataset.view = `col:${col.id}`;
     if (state.view === `col:${col.id}`) btn.classList.add('active');
-    const count = state.links.filter(l => l.collection === col.id).length;
-    btn.innerHTML = `<span>${col.name}</span><em class="bdg">${count}</em>`;
+    btn.innerHTML = `<span>${col.name}</span>`;
     btn.addEventListener('click', () => setView(`col:${col.id}`));
-    nav.appendChild(btn);
+    item.appendChild(btn);
+
+    const actions = document.createElement('div');
+    actions.className = 'col-actions';
+
+    const editBtn = document.createElement('button');
+    editBtn.className = 'col-act-btn edit-col-btn';
+    editBtn.dataset.id = col.id;
+    editBtn.title = 'Edit Collection';
+    editBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+      <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+    </svg>`;
+    editBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openEditCollection(col.id);
+    });
+
+    const delBtn = document.createElement('button');
+    delBtn.className = 'col-act-btn del-col-btn';
+    delBtn.dataset.id = col.id;
+    delBtn.title = 'Delete Collection';
+    delBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="3 6 5 6 21 6" />
+      <path d="M19 6l-1 14H6L5 6" />
+      <path d="M10 11v6M14 11v6" />
+      <path d="M9 6V4h6v2" />
+    </svg>`;
+    delBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      confirmDeleteCollection(col.id, col.name);
+    });
+
+    actions.appendChild(editBtn);
+    actions.appendChild(delBtn);
+    item.appendChild(actions);
+
+    const count = state.links.filter(l => l.collection === col.id).length;
+    const bdg = document.createElement('em');
+    bdg.className = 'bdg';
+    bdg.textContent = count;
+    bdg.addEventListener('click', (e) => {
+      e.stopPropagation();
+      setView(`col:${col.id}`);
+    });
+    item.appendChild(bdg);
+
+    nav.appendChild(item);
   });
 
   // Update collection selects
-  const opts = state.collections.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+  const opts = state.collections.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
   $('f-col').innerHTML = '<option value="">None</option>' + opts;
 }
 
@@ -218,15 +270,20 @@ function setView(v) {
   document.querySelectorAll('.nav-btn').forEach(b => {
     b.classList.toggle('active', b.dataset.view === v);
   });
+  // Update active col item container
+  document.querySelectorAll('.col-nav-item').forEach(item => {
+    const btn = item.querySelector('.nav-btn');
+    item.classList.toggle('active', btn && btn.dataset.view === v);
+  });
   // Title
-  const titles = { all:'All Links', favorites:'Favorites' };
+  const titles = { all: 'All Links', favorites: 'Favorites' };
   if (titles[v]) {
     $('view-title').textContent = titles[v];
-    $('view-sub').textContent = { all:'Your personal knowledge base', favorites:'Your starred links' }[v];
+    $('view-sub').textContent = { all: 'Your personal knowledge base', favorites: 'Your starred links' }[v];
   } else if (v.startsWith('col:')) {
-    const col = state.collections.find(c => c.id === parseInt(v.replace('col:','')));
+    const col = state.collections.find(c => c.id === parseInt(v.replace('col:', '')));
     $('view-title').textContent = col ? col.name : 'Collection';
-    $('view-sub').textContent   = 'Collection links';
+    $('view-sub').textContent = 'Collection links';
   }
   renderGrid();
   // Mobile: close sidebar
@@ -234,8 +291,8 @@ function setView(v) {
 }
 
 // ── Sidebar ──
-function openSidebar()  { $('sidebar').classList.add('open'); $('overlay').classList.remove('hidden'); setTimeout(()=>$('overlay').classList.add('show'),10); }
-function closeSidebar() { $('sidebar').classList.remove('open'); $('overlay').classList.remove('show'); setTimeout(()=>$('overlay').classList.add('hidden'),200); }
+function openSidebar() { $('sidebar').classList.add('open'); $('overlay').classList.remove('hidden'); setTimeout(() => $('overlay').classList.add('show'), 10); }
+function closeSidebar() { $('sidebar').classList.remove('open'); $('overlay').classList.remove('show'); setTimeout(() => $('overlay').classList.add('hidden'), 200); }
 
 // ── Load data ──
 async function loadData() {
@@ -248,12 +305,12 @@ async function loadData() {
 function openLinkModal(link = null) {
   state.editId = link ? link.id : null;
   $('ml-title').textContent = link ? 'Edit Link' : 'Add New Link';
-  $('f-url').value   = link?.url         || '';
-  $('f-title').value = link?.title       || '';
-  $('f-desc').value  = link?.description || '';
-  $('f-tags').value  = (link?.tags||[]).join(', ');
-  $('f-fav').checked  = link?.favorite   || false;
-  $('f-col').value   = link?.collection  || '';
+  $('f-url').value = link?.url || '';
+  $('f-title').value = link?.title || '';
+  $('f-desc').value = link?.description || '';
+  $('f-tags').value = (link?.tags || []).join(', ');
+  $('f-fav').checked = link?.favorite || false;
+  $('f-col').value = link?.collection || '';
   $('preview-card').classList.add('hidden');
   if (link?.image || link?.url) showPreview({ image: link.image, title: link.title, url: link.url });
   openModal('m-link');
@@ -264,8 +321,8 @@ function showPreview({ image, title, url }) {
   const thumb = $('prev-thumb');
   if (image) thumb.innerHTML = `<img src="${image}" alt="preview" onerror="this.remove()"/>`;
   else if (url && isImage(url)) thumb.innerHTML = `<img src="${url}" alt="img" onerror="this.remove()"/>`;
-  else thumb.innerHTML = `<img src="${faviconUrl(url||'')}" style="width:32px;height:32px" alt="" onerror="this.remove()"/>`;
-  $('prev-site').textContent  = domain(url||'');
+  else thumb.innerHTML = `<img src="${faviconUrl(url || '')}" style="width:32px;height:32px" alt="" onerror="this.remove()"/>`;
+  $('prev-site').textContent = domain(url || '');
   $('prev-title').textContent = title || url || '';
   $('preview-card').classList.remove('hidden');
 }
@@ -274,15 +331,15 @@ function showPreview({ image, title, url }) {
 async function saveLink() {
   const url = $('f-url').value.trim();
   if (!url) { toast('Please enter a URL', 'error'); return; }
-  const tags = $('f-tags').value.split(',').map(t=>t.trim()).filter(Boolean);
+  const tags = $('f-tags').value.split(',').map(t => t.trim()).filter(Boolean);
   const data = {
     url,
-    title:       $('f-title').value.trim() || domain(url),
+    title: $('f-title').value.trim() || domain(url),
     description: $('f-desc').value.trim(),
     tags,
-    collection:  $('f-col').value ? parseInt($('f-col').value) : null,
-    favorite:    $('f-fav').checked,
-    image:       $('prev-thumb').querySelector('img')?.src || '',
+    collection: $('f-col').value ? parseInt($('f-col').value) : null,
+    favorite: $('f-fav').checked,
+    image: $('prev-thumb').querySelector('img')?.src || '',
   };
   if (state.editId) {
     const existing = await DB.getLink(state.editId);
@@ -299,26 +356,82 @@ async function saveLink() {
 // ── Delete ──
 function confirmDelete(id, title) {
   state.deleteId = id;
+  state.deleteColId = null;
+  $('md-title').textContent = 'Delete Link?';
   $('del-name').textContent = title || 'this link';
   openModal('m-del');
 }
-async function doDelete() {
-  if (!state.deleteId) return;
-  await DB.deleteLink(state.deleteId);
+function confirmDeleteCollection(id, name) {
+  state.deleteColId = id;
   state.deleteId = null;
-  closeModal('m-del');
-  toast('Link deleted', 'info');
-  await loadData();
+  $('md-title').textContent = 'Delete Collection?';
+  $('del-name').textContent = `collection "${name}" (associated links will be kept but set to None)`;
+  openModal('m-del');
+}
+async function doDelete() {
+  if (state.deleteId) {
+    await DB.deleteLink(state.deleteId);
+    state.deleteId = null;
+    closeModal('m-del');
+    toast('Link deleted', 'info');
+    await loadData();
+  } else if (state.deleteColId) {
+    const colId = state.deleteColId;
+    state.deleteColId = null;
+
+    // 1. Delete collection
+    await DB.deleteCollection(colId);
+
+    // 2. Set collection = null for links inside this collection
+    const links = await DB.getAllLinks();
+    for (const l of links) {
+      if (l.collection === colId) {
+        await DB.updateLink({ ...l, collection: null });
+      }
+    }
+
+    // 3. If current view is the deleted collection, reset to all
+    if (state.view === `col:${colId}`) {
+      setView('all');
+    }
+
+    closeModal('m-del');
+    toast('Collection deleted', 'info');
+    await loadData();
+  }
 }
 
 // ── Collections ──
+function openEditCollection(colId) {
+  const col = state.collections.find(c => c.id === colId);
+  if (!col) return;
+  state.editColId = colId;
+  $('mc-title').textContent = 'Edit Collection';
+  $('btn-save-col').textContent = 'Save';
+  $('c-name').value = col.name;
+  openModal('m-col');
+}
 async function saveCollection() {
   const name = $('c-name').value.trim();
   if (!name) { toast('Enter a collection name', 'error'); return; }
-  await DB.addCollection({ name });
+
+  if (state.editColId) {
+    const existing = state.collections.find(c => c.id === state.editColId);
+    if (existing) {
+      await DB.updateCollection({ ...existing, name });
+      toast(`Collection updated to "${name}"`, 'success');
+    }
+    state.editColId = null;
+  } else {
+    await DB.addCollection({ name });
+    toast(`Collection "${name}" created`, 'success');
+  }
+
   closeModal('m-col');
+  // Reset modal state
+  $('mc-title').textContent = 'New Collection';
+  $('btn-save-col').textContent = 'Create';
   $('c-name').value = '';
-  toast(`Collection "${name}" created`, 'success');
   await loadData();
 }
 
@@ -384,7 +497,7 @@ function startDictate(inputId, btnId) {
 // ── Theme ──
 function toggleTheme() {
   const current = document.documentElement.getAttribute('data-theme');
-  const next    = current === 'dark' ? 'light' : 'dark';
+  const next = current === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', next);
   localStorage.setItem('lb-theme', next);
   updateThemeBtn(next);
@@ -433,7 +546,13 @@ function wireEvents() {
   $('btn-del-confirm').addEventListener('click', doDelete);
 
   // New collection
-  $('btn-new-col').addEventListener('click', () => { $('c-name').value=''; openModal('m-col'); });
+  $('btn-new-col').addEventListener('click', () => {
+    state.editColId = null;
+    $('mc-title').textContent = 'New Collection';
+    $('btn-save-col').textContent = 'Create';
+    $('c-name').value = '';
+    openModal('m-col');
+  });
   $('btn-save-col').addEventListener('click', saveCollection);
 
 
@@ -482,29 +601,45 @@ function wireEvents() {
   // Theme
   $('btn-theme').addEventListener('click', toggleTheme);
 
-  // Export
+  // Export / Import
   $('btn-json').addEventListener('click', () => Export.toJSON());
-  $('btn-pdf').addEventListener('click',  () => Export.toPDF());
+  $('btn-pdf').addEventListener('click', () => Export.toPDF());
+
+  const btnImport = $('btn-import-json');
+  const inpImport = $('inp-import-json');
+  if (btnImport && inpImport) {
+    btnImport.addEventListener('click', () => inpImport.click());
+    inpImport.addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (file) {
+        Export.fromJSON(file);
+        inpImport.value = '';
+      }
+    });
+  }
+
+  // Handle window resize for responsive layout
+  window.addEventListener('resize', updateSearchPlaceholder);
 
   // Card actions (delegated)
   $('grid').addEventListener('click', async e => {
-    const favBtn  = e.target.closest('.fav-btn');
+    const favBtn = e.target.closest('.fav-btn');
     const editBtn = e.target.closest('.edit-btn');
-    const delBtn  = e.target.closest('.del-btn');
+    const delBtn = e.target.closest('.del-btn');
 
     if (favBtn) {
-      const id   = parseInt(favBtn.dataset.id);
+      const id = parseInt(favBtn.dataset.id);
       const link = await DB.getLink(id);
       await DB.updateLink({ ...link, favorite: !link.favorite });
       await loadData();
     }
     if (editBtn) {
-      const id   = parseInt(editBtn.dataset.id);
+      const id = parseInt(editBtn.dataset.id);
       const link = await DB.getLink(id);
       openLinkModal(link);
     }
     if (delBtn) {
-      const id   = parseInt(delBtn.dataset.id);
+      const id = parseInt(delBtn.dataset.id);
       const link = await DB.getLink(id);
       confirmDelete(id, link?.title || link?.url);
     }
@@ -553,21 +688,29 @@ function showInstallPrompt() {
   }, { once: true });
 }
 
+function updateSearchPlaceholder() {
+  const inp = $('search-inp');
+  if (inp) {
+    inp.placeholder = window.innerWidth < 480 ? 'Search…' : (window.innerWidth < 768 ? 'Search links…' : 'Search or describe a link…');
+  }
+}
+
 // ── Init ──
 async function init() {
   // Theme
   const saved = localStorage.getItem('lb-theme') || 'dark';
   document.documentElement.setAttribute('data-theme', saved);
   updateThemeBtn(saved);
+  updateSearchPlaceholder();
 
   // Service worker
   if ('serviceWorker' in navigator) {
     if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
       navigator.serviceWorker.getRegistrations().then(regs => {
         for (let r of regs) r.unregister();
-      }).catch(()=>{});
+      }).catch(() => { });
     } else {
-      navigator.serviceWorker.register('sw.js').catch(()=>{});
+      navigator.serviceWorker.register('sw.js').catch(() => { });
     }
   }
 

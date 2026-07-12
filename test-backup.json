@@ -1,0 +1,35 @@
+{
+  "collections": [
+    {
+      "id": 999,
+      "name": "Dev Tools",
+      "createdAt": 1783872000000
+    }
+  ],
+  "links": [
+    {
+      "id": 1001,
+      "url": "https://github.com",
+      "title": "GitHub",
+      "description": "Where the world builds software",
+      "tags": ["code", "git", "collaboration"],
+      "collection": 999,
+      "collectionName": "Dev Tools",
+      "favorite": true,
+      "image": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
+      "createdAt": 1783872010000
+    },
+    {
+      "id": 1002,
+      "url": "https://google.com",
+      "title": "Google",
+      "description": "Search the world's information",
+      "tags": ["search", "engine"],
+      "collection": null,
+      "collectionName": null,
+      "favorite": false,
+      "createdAt": 1783872020000
+    }
+  ],
+  "exportedAt": "2026-07-12T16:00:00.000Z"
+}

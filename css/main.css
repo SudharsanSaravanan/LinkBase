@@ -328,6 +328,99 @@ img {
   border-left: 3px solid var(--text)
 }
 
+.col-nav-item {
+  display: flex;
+  align-items: center;
+  position: relative;
+  border-radius: var(--radius-sm);
+  transition: background var(--trans);
+  margin-bottom: 2px;
+  width: 100%;
+  padding-right: 12px;
+}
+
+.col-nav-item:hover {
+  background: var(--surface);
+}
+
+.col-nav-item.active {
+  background: var(--accent-bg);
+  color: var(--text);
+  border-left: 3px solid var(--text);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.col-nav-item .nav-btn {
+  flex: 1;
+  min-width: 0;
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+  border-left: none;
+  background: transparent;
+  width: auto;
+}
+
+.col-nav-item .nav-btn.active {
+  background: transparent;
+  border-left: none;
+}
+
+.col-nav-item .nav-btn:hover {
+  background: transparent;
+}
+
+.col-nav-item .nav-btn span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  text-align: left;
+}
+
+.col-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding-right: 6px;
+  opacity: 0;
+  transition: opacity var(--trans);
+  background: transparent;
+  flex-shrink: 0;
+}
+
+.col-nav-item:hover .col-actions {
+  opacity: 1;
+}
+
+@media (max-width: 1024px) {
+  .col-actions {
+    opacity: 0.7;
+  }
+}
+
+.col-act-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text3);
+  transition: all var(--trans);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.col-act-btn:hover {
+  background: var(--surface2);
+  color: var(--text);
+}
+
+.col-act-btn svg {
+  width: 13px;
+  height: 13px;
+}
+
 .bdg {
   font-style: normal;
   margin-left: auto;
@@ -337,10 +430,12 @@ img {
   padding: 2px 7px;
   border-radius: 20px;
   min-width: 20px;
-  text-align: center
+  text-align: center;
+  flex-shrink: 0;
 }
 
-.nav-btn.active .bdg {
+.nav-btn.active .bdg,
+.col-nav-item.active .bdg {
   background: var(--text);
   color: var(--bg)
 }
@@ -1462,8 +1557,32 @@ img {
   }
 
   .topbar {
+    height: 56px;
     padding: 0 12px;
     gap: 8px
+  }
+
+  .search-box {
+    padding: 0 4px 0 10px;
+    gap: 4px;
+  }
+
+  #search-inp {
+    height: 36px;
+    font-size: 0.85rem;
+  }
+
+  .btn-primary {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    justify-content: center;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .btn-primary svg {
+    margin: 0;
   }
 
   .btn-primary span {

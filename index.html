@@ -14,7 +14,7 @@
   <link rel="apple-touch-icon" href="logo.png" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
     rel="stylesheet" />
-  <link rel="stylesheet" href="css/main.css?v=3" />
+  <link rel="stylesheet" href="css/main.css?v=7" />
 </head>
 
 <body>
@@ -81,6 +81,14 @@
         </button>
       </nav>
       <div class="sidebar-foot">
+        <button id="btn-import-json" class="foot-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="16 16 12 12 8 16" />
+            <line x1="12" y1="12" x2="12" y2="21" />
+            <path d="M20.88 18.09A5 5 0 0018 9h-1.26A8 8 0 103 16.29" />
+          </svg>Import JSON
+        </button>
+        <input type="file" id="inp-import-json" accept=".json" style="position:absolute;left:-9999px;opacity:0;width:0;height:0;pointer-events:none;" />
         <button id="btn-json" class="foot-btn">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="8 17 12 21 16 17" />
@@ -133,7 +141,7 @@
             <line x1="12" y1="5" x2="12" y2="19" />
             <line x1="5" y1="12" x2="19" y2="12" />
           </svg>
-          Add Link
+          <span>Add Link</span>
         </button>
       </header>
 
@@ -208,7 +216,8 @@
           <div class="fld-row">
             <input id="f-title" type="text" placeholder="Link title" />
             <button id="btn-dictate-title" class="dict-btn" title="Voice fill title" aria-label="Dictate title">
-              <svg class="mic-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+              <svg class="mic-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16"
+                height="16">
                 <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z" />
                 <path d="M19 10v2a7 7 0 01-14 0v-2" />
                 <line x1="12" y1="19" x2="12" y2="23" />
@@ -225,7 +234,8 @@
           <div class="fld-row">
             <textarea id="f-desc" rows="3" placeholder="Your notes…"></textarea>
             <button id="btn-dictate-desc" class="dict-btn" title="Voice fill notes" aria-label="Dictate notes">
-              <svg class="mic-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+              <svg class="mic-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16"
+                height="16">
                 <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z" />
                 <path d="M19 10v2a7 7 0 01-14 0v-2" />
                 <line x1="12" y1="19" x2="12" y2="23" />
@@ -309,10 +319,10 @@
 
   <div id="toasts" aria-live="polite"></div>
 
-  <script src="js/db.js"></script>
-  <script src="js/voice.js"></script>
-  <script src="js/export.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/db.js?v=7"></script>
+  <script src="js/voice.js?v=7"></script>
+  <script src="js/export.js?v=7"></script>
+  <script src="js/app.js?v=7"></script>
 </body>
 
 </html>

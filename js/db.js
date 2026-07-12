@@ -46,6 +46,7 @@ const DB = {
   getAllLinks: ()   => tx('links','readonly',  s => req2p(s.getAll())),
 
   addCollection:    data => tx('collections','readwrite', s => req2p(s.add({ ...data, createdAt: Date.now() }))),
+  updateCollection: data => tx('collections','readwrite', s => req2p(s.put(data))),
   getAllCollections: ()   => tx('collections','readonly',  s => req2p(s.getAll())),
   deleteCollection: id   => tx('collections','readwrite', s => req2p(s.delete(id))),
 };

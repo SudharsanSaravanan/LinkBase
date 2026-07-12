@@ -1,4 +1,4 @@
-const CACHE = 'linkbase-v3';
+const CACHE = 'linkbase-v7';
 const ASSETS = [
   '/',
   '/index.html',
@@ -40,12 +40,12 @@ self.addEventListener('fetch', e => {
   // Network-first for CDN, cache-first for app assets
   if (url.origin !== location.origin) {
     e.respondWith(
-      fetch(e.request).catch(() => caches.match(e.request))
+      fetch(e.request).catch(() => caches.match(e.request, { ignoreSearch: true }))
     );
     return;
   }
   e.respondWith(
-    caches.match(e.request).then(cached =>
+    caches.match(e.request, { ignoreSearch: true }).then(cached =>
       cached || fetch(e.request).then(r => {
         const clone = r.clone();
         caches.open(CACHE).then(c => c.put(e.request, clone));
