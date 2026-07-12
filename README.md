@@ -1,6 +1,8 @@
-# LinkBase
+# LinkBase 
 
 LinkBase is a private, lightweight, progressive web app (PWA) designed for offline-first personal link management. It features a clean monochromatic user interface with local storage, voice search, and voice dictation.
+
+<img width="1920" height="1015" alt="Your paragraph text" src="https://github.com/user-attachments/assets/992a6999-0f5f-4aa5-bfdc-16bef1e4d9ae" />
 
 ## Features
 
